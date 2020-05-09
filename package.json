@@ -1,0 +1,23 @@
+{
+  "name": "byrn",
+  "version": "1.0.0",
+  "description": "Discord Bot for Zyrn's Discord Server & intergration with Zyrn.Dev",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZyrnDev/Byrn.git"
+  },
+  "author": "Zyrn.Dev (Mitchell Lee)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZyrnDev/Byrn/issues"
+  },
+  "homepage": "https://github.com/ZyrnDev/Byrn#readme",
+  "dependencies": {
+    "discord.js": "^12.2.0"
+  }
+}
