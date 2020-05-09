@@ -1,8 +1,8 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const { token, prefix } = require('./config.json');
+const { token, prefix, messages, emojis, roles } = require('./config.json');
 
-const client = new Discord.Client();
+const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 
@@ -30,7 +30,7 @@ client.on('message', message => {
     if (commandName === 'test') {
         return test(message, args);
     }
-    
+
     if (!command) return;
     
 
@@ -76,49 +76,77 @@ client.on('message', message => {
 	}
 });
 
-function test(message) {
+function test(message, args) {
     message.channel.send("Yeah I work idiot. What? You thought I was badly programmed!?!");
 }
 
 
-// client.on('messageReactionAdd', (reaction, user) => {
-// 	if (reaction.message.id === apexMsg) {
-// 		if (reaction.emoji.id === apex) {
-// 			reaction.message.guild.member(user).addRole(apexRole);
-// 		}
-// 	} else if (reaction.message.id === csgoMsg) {
-// 		if (reaction.emoji.id === csgo) {
-// 			reaction.message.guild.member(user).addRole(csgoRole);
-// 		}
-// 	} else if (reaction.message.id === rotmgMsg) {
-// 		if (reaction.emoji.id === rotmg) {
-// 			reaction.message.guild.member(user).addRole(rotmgRole);
-// 		}
-// 	} else if (reaction.message.id === programmingMsg) {
-// 		if (reaction.emoji.id === programming) {
-// 			reaction.message.guild.member(user).addRole(programmingRole);
-// 		}
-// 	}
-// });
+client.on('messageReactionAdd', async (reaction, user) => {
+    if (reaction.partial) {
+		// If the message this reaction belongs to was removed the fetching might result in an API error, which we need to handle
+		try {
+			await reaction.fetch();
+		} catch (error) {
+			console.log('Something went wrong when fetching the message: ', error);
+			// Return as `reaction.message.author` may be undefined/null
+			return;
+		}
+    }
+    
+    switch(reaction.message.id) {
+        case messages.csgo:
+            if (reaction.emoji.id === emojis.csgo) {
+                reaction.message.guild.member(user).roles.add(roles.csgo);
+            }
+          break;
+        case messages.rotmg:
+            if (reaction.emoji.id === emojis.rotmg) {
+                reaction.message.guild.member(user).roles.add(roles.rotmg);
+            }
+          break;
+        case messages.programming:
+            if (reaction.emoji.id === emojis.programming) {
+                reaction.message.guild.member(user).roles.add(roles.programming);
+            }
+          break;
+        default:
+          // Do nothing
+          break;
+    }
+});
 
-// client.on('messageReactionRemove', (reaction, user) => {
-// 	if (reaction.message.id === apexMsg) {
-// 		if (reaction.emoji.id === apex) {
-// 			reaction.message.guild.member(user).removeRole(apexRole);
-// 		}
-// 	} else if (reaction.message.id === csgoMsg) {
-// 		if (reaction.emoji.id === csgo) {
-// 			reaction.message.guild.member(user).removeRole(csgoRole);
-// 		}
-// 	} else if (reaction.message.id === rotmgMsg) {
-// 		if (reaction.emoji.id === rotmg) {
-// 			reaction.message.guild.member(user).removeRole(rotmgRole);
-// 		}
-// 	} else if (reaction.message.id === programmingMsg) {
-// 		if (reaction.emoji.id === programming) {
-// 			reaction.message.guild.member(user).removeRole(programmingRole);
-// 		}
-// 	}
-// });
+client.on('messageReactionRemove', async (reaction, user) => {
+    if (reaction.partial) {
+		// If the message this reaction belongs to was removed the fetching might result in an API error, which we need to handle
+		try {
+			await reaction.fetch();
+		} catch (error) {
+			console.log('Something went wrong when fetching the message: ', error);
+			// Return as `reaction.message.author` may be undefined/null
+			return;
+		}
+    }
+    
+    switch(reaction.message.id) {
+        case messages.csgo:
+            if (reaction.emoji.id === emojis.csgo) {
+                reaction.message.guild.member(user).roles.remove(roles.csgo);
+            }
+          break;
+        case messages.rotmg:
+            if (reaction.emoji.id === emojis.rotmg) {
+                reaction.message.guild.member(user).roles.remove(roles.rotmg);
+            }
+          break;
+        case messages.programming:
+            if (reaction.emoji.id === emojis.programming) {
+                reaction.message.guild.member(user).roles.remove(roles.programming);
+            }
+          break;
+        default:
+          // Do nothing
+          break;
+    }
+});
 
 client.login(token);
